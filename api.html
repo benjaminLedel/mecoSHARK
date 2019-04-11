@@ -1,0 +1,960 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. API Documentation &mdash; mecoSHARK 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="2. How to Extend" href="extension.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> mecoSHARK
+          
+
+          
+            
+            <img src="_static/SmartSHARK_read_the_docs_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extension.html">2. How to Extend</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-mecoshark">3.1. Main Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#application">3.2. Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#processor">3.3. Processor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#base-processor">3.3.1. Base Processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#c-processor">3.3.2. C Processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#java-processor">3.3.3. Java Processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#python-processor">3.3.4. Python Processor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#resultparser">3.4. Resultparser</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sourcemeterparser">3.4.1. SourceMeterParser</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mecoSHARK</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>3. API Documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-documentation">
+<h1>3. API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-mecoshark">
+<span id="main-module"></span><h2>3.1. Main Module<a class="headerlink" href="#module-mecoshark" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="application">
+<h2>3.2. Application<a class="headerlink" href="#application" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mecoshark.mecosharkapp.MecoSHARK">
+<em class="property">class </em><code class="descclassname">mecoshark.mecosharkapp.</code><code class="descname">MecoSHARK</code><span class="sig-paren">(</span><em>input_path</em>, <em>output</em>, <em>project_name</em>, <em>revision</em>, <em>url</em>, <em>makefile_contents</em>, <em>db_name</em>, <em>db_host</em>, <em>db_port</em>, <em>db_user</em>, <em>db_password</em>, <em>db_authentication</em>, <em>debug_level</em>, <em>ssl_enabled</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/mecosharkapp.html#MecoSHARK"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.mecosharkapp.MecoSHARK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main app for the mecoshark plugin</p>
+<dl class="method">
+<dt id="mecoshark.mecosharkapp.MecoSHARK.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_path</em>, <em>output</em>, <em>project_name</em>, <em>revision</em>, <em>url</em>, <em>makefile_contents</em>, <em>db_name</em>, <em>db_host</em>, <em>db_port</em>, <em>db_user</em>, <em>db_password</em>, <em>db_authentication</em>, <em>debug_level</em>, <em>ssl_enabled</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/mecosharkapp.html#MecoSHARK.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.mecosharkapp.MecoSHARK.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main runner of the mecoshark app</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input</strong> – path to the revision that is used as input</li>
+<li><strong>output</strong> – path to an output directory, where files can be stored</li>
+<li><strong>project_name</strong> – </li>
+<li><strong>revision</strong> – string of the revision hash</li>
+<li><strong>url</strong> – url of the project that is analyzed</li>
+<li><strong>makefile_contents</strong> – contents of the makefile (e.g., for the c processor)</li>
+<li><strong>db_name</strong> – name of the database</li>
+<li><strong>db_host</strong> – name of the host where the mongodb is running</li>
+<li><strong>db_port</strong> – port on which the mongodb listens on</li>
+<li><strong>db_user</strong> – username of the mongodb user</li>
+<li><strong>db_password</strong> – password for the mongodb user</li>
+<li><strong>db_authentication</strong> – name of the database that is used as authentication</li>
+<li><strong>debug_level</strong> – debug level like defined in <a class="reference external" href="https://docs.python.org/3.5/library/logging.html#module-logging" title="(in Python v3.5)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">URL must be the same as the url that was stored in the mongodb by vcsSHARK!</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.mecosharkapp.MecoSHARK.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#mecoshark.mecosharkapp.MecoSHARK.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.mecosharkapp.MecoSHARK.detect_languages">
+<code class="descname">detect_languages</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/mecosharkapp.html#MecoSHARK.detect_languages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.mecosharkapp.MecoSHARK.detect_languages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detects programming languages used in the input path</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.mecosharkapp.MecoSHARK.process_revision">
+<code class="descname">process_revision</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/mecosharkapp.html#MecoSHARK.process_revision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.mecosharkapp.MecoSHARK.process_revision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes a revision. First the language is detected, that the system uses, after that
+the correct processors are found, which can be used for this language and the process method is called.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="mecoshark.mecosharkapp.MecoSHARK.sanitize_sloccount_output">
+<em class="property">static </em><code class="descname">sanitize_sloccount_output</code><span class="sig-paren">(</span><em>output</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/mecosharkapp.html#MecoSHARK.sanitize_sloccount_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.mecosharkapp.MecoSHARK.sanitize_sloccount_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that sanitizes the sloccount output (because we read it directly from the command line)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>output</strong> – ouput that must be sanitized</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="processor">
+<h2>3.3. Processor<a class="headerlink" href="#processor" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="base-processor">
+<h3>3.3.1. Base Processor<a class="headerlink" href="#base-processor" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="mecoshark.processor.baseprocessor.BaseProcessor">
+<em class="property">class </em><code class="descclassname">mecoshark.processor.baseprocessor.</code><code class="descname">BaseProcessor</code><span class="sig-paren">(</span><em>output_path</em>, <em>input_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/baseprocessor.html#BaseProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.baseprocessor.BaseProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main app for the mecoshark plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>output_path</strong> – path to an output directory, where files can be stored</li>
+<li><strong>input_path</strong> – path to the revision that is used as input</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Property input_path:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">path to the revisionn that is used as input</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Property output_path:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first">path to an output directory, where files can be stored</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Property projectname:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">name of the project (last part of input path)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mecoshark.processor.baseprocessor.BaseProcessor.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>output_path</em>, <em>input_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/baseprocessor.html#BaseProcessor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.baseprocessor.BaseProcessor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.baseprocessor.BaseProcessor.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#mecoshark.processor.baseprocessor.BaseProcessor.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.baseprocessor.BaseProcessor.enabled">
+<code class="descname">enabled</code><a class="headerlink" href="#mecoshark.processor.baseprocessor.BaseProcessor.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trigger to enable/disable plugins</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.processor.baseprocessor.BaseProcessor.prepare_template">
+<code class="descname">prepare_template</code><span class="sig-paren">(</span><em>template</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/baseprocessor.html#BaseProcessor.prepare_template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.baseprocessor.BaseProcessor.prepare_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the template from the template folder to the output_path and sets access rights.</p>
+<p>Several variables (marked with $&lt;name&gt;) are substituted, so that the template can be used right away</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>template</strong> – path to the template</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.processor.baseprocessor.BaseProcessor.process">
+<code class="descname">process</code><span class="sig-paren">(</span><em>project_name</em>, <em>revision</em>, <em>url</em>, <em>options</em>, <em>debug_level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/baseprocessor.html#BaseProcessor.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.baseprocessor.BaseProcessor.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is called if a revision with hash “revision” should be processed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>project_name</strong> – name of the project</li>
+<li><strong>revision</strong> – revision_hash of the revision</li>
+<li><strong>url</strong> – url of the project that is analyzed</li>
+<li><strong>options</strong> – possible options (e.g. for CProcessor)</li>
+<li><strong>debug_level</strong> – debugging_level</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.baseprocessor.BaseProcessor.supported_languages">
+<code class="descname">supported_languages</code><a class="headerlink" href="#mecoshark.processor.baseprocessor.BaseProcessor.supported_languages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Currently: java, c, cs, cpp, python
+:return:</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.baseprocessor.BaseProcessor.threshold">
+<code class="descname">threshold</code><a class="headerlink" href="#mecoshark.processor.baseprocessor.BaseProcessor.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Threshold on which the processor should be executed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body">If threshold is 0.4, then the processor is executed if more than 40% of all files have the supported file type.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">threshold</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="c-processor">
+<h3>3.3.2. C Processor<a class="headerlink" href="#c-processor" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="mecoshark.processor.cprocessor.CProcessor">
+<em class="property">class </em><code class="descclassname">mecoshark.processor.cprocessor.</code><code class="descname">CProcessor</code><span class="sig-paren">(</span><em>output_path</em>, <em>input_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/cprocessor.html#CProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.cprocessor.CProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor" title="mecoshark.processor.baseprocessor.BaseProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseProcessor</span></code></a> for C-like languages</p>
+<dl class="method">
+<dt id="mecoshark.processor.cprocessor.CProcessor.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>output_path</em>, <em>input_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/cprocessor.html#CProcessor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.cprocessor.CProcessor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.cprocessor.CProcessor.enabled">
+<code class="descname">enabled</code><a class="headerlink" href="#mecoshark.processor.cprocessor.CProcessor.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.enabled" title="mecoshark.processor.baseprocessor.BaseProcessor.enabled"><code class="xref py py-func docutils literal notranslate"><span class="pre">enabled()</span></code></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.processor.cprocessor.CProcessor.execute_sourcemeter">
+<code class="descname">execute_sourcemeter</code><span class="sig-paren">(</span><em>makefile_contents=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/cprocessor.html#CProcessor.execute_sourcemeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.cprocessor.CProcessor.execute_sourcemeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes sourcemeter with the given makefile_contents</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>makefile_contents</strong> – makefile_contents for execution</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.processor.cprocessor.CProcessor.is_output_produced">
+<code class="descname">is_output_produced</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/cprocessor.html#CProcessor.is_output_produced"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.cprocessor.CProcessor.is_output_produced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if output was produced for the process</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.processor.cprocessor.CProcessor.process">
+<code class="descname">process</code><span class="sig-paren">(</span><em>revision</em>, <em>url</em>, <em>makefile_contents</em>, <em>debug_level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/cprocessor.html#CProcessor.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.cprocessor.CProcessor.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.process" title="mecoshark.processor.baseprocessor.BaseProcessor.process"><code class="xref py py-func docutils literal notranslate"><span class="pre">process()</span></code></a></p>
+<p>Processes the given revision.
+1) executes sourcemeter
+2) creates <a class="reference internal" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser" title="mecoshark.resultparser.sourcemeterparser.SourcemeterParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">SourcemeterParser</span></code></a> instance
+3) calls <a class="reference internal" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_data" title="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">store_data()</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>revision</strong> – revision</li>
+<li><strong>url</strong> – url of the project that is analyzed</li>
+<li><strong>makefile_contents</strong> – makefile_contents for execution</li>
+<li><strong>debug_level</strong> – debugging_level</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.cprocessor.CProcessor.supported_languages">
+<code class="descname">supported_languages</code><a class="headerlink" href="#mecoshark.processor.cprocessor.CProcessor.supported_languages" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.supported_languages" title="mecoshark.processor.baseprocessor.BaseProcessor.supported_languages"><code class="xref py py-func docutils literal notranslate"><span class="pre">supported_languages()</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.cprocessor.CProcessor.threshold">
+<code class="descname">threshold</code><a class="headerlink" href="#mecoshark.processor.cprocessor.CProcessor.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.threshold" title="mecoshark.processor.baseprocessor.BaseProcessor.threshold"><code class="xref py py-func docutils literal notranslate"><span class="pre">threshold()</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="java-processor">
+<h3>3.3.3. Java Processor<a class="headerlink" href="#java-processor" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="mecoshark.processor.javaprocessor.JavaProcessor">
+<em class="property">class </em><code class="descclassname">mecoshark.processor.javaprocessor.</code><code class="descname">JavaProcessor</code><span class="sig-paren">(</span><em>output_path</em>, <em>input_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/javaprocessor.html#JavaProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.javaprocessor.JavaProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor" title="mecoshark.processor.baseprocessor.BaseProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseProcessor</span></code></a> for Java</p>
+<dl class="method">
+<dt id="mecoshark.processor.javaprocessor.JavaProcessor.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>output_path</em>, <em>input_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/javaprocessor.html#JavaProcessor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.javaprocessor.JavaProcessor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.javaprocessor.JavaProcessor.enabled">
+<code class="descname">enabled</code><a class="headerlink" href="#mecoshark.processor.javaprocessor.JavaProcessor.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.enabled" title="mecoshark.processor.baseprocessor.BaseProcessor.enabled"><code class="xref py py-func docutils literal notranslate"><span class="pre">enabled()</span></code></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.processor.javaprocessor.JavaProcessor.execute_sourcemeter">
+<code class="descname">execute_sourcemeter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/javaprocessor.html#JavaProcessor.execute_sourcemeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.javaprocessor.JavaProcessor.execute_sourcemeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes sourcemeter for the java language
+Currently, we just do a directory-based analysis</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.processor.javaprocessor.JavaProcessor.is_output_produced">
+<code class="descname">is_output_produced</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/javaprocessor.html#JavaProcessor.is_output_produced"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.javaprocessor.JavaProcessor.is_output_produced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if output was produced for the process</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.processor.javaprocessor.JavaProcessor.process">
+<code class="descname">process</code><span class="sig-paren">(</span><em>project_name</em>, <em>revision</em>, <em>url</em>, <em>options</em>, <em>debug_level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/javaprocessor.html#JavaProcessor.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.javaprocessor.JavaProcessor.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.process" title="mecoshark.processor.baseprocessor.BaseProcessor.process"><code class="xref py py-func docutils literal notranslate"><span class="pre">process()</span></code></a></p>
+<p>Processes the given revision.
+1) executes sourcemeter
+2) creates <a class="reference internal" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser" title="mecoshark.resultparser.sourcemeterparser.SourcemeterParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">SourcemeterParser</span></code></a> instance
+3) calls <a class="reference internal" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_data" title="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">store_data()</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>project_name</strong> – name of the project</li>
+<li><strong>revision</strong> – revision</li>
+<li><strong>url</strong> – url of the project that is analyzed</li>
+<li><strong>options</strong> – options for execution</li>
+<li><strong>debug_level</strong> – debugging_level</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.javaprocessor.JavaProcessor.supported_languages">
+<code class="descname">supported_languages</code><a class="headerlink" href="#mecoshark.processor.javaprocessor.JavaProcessor.supported_languages" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.supported_languages" title="mecoshark.processor.baseprocessor.BaseProcessor.supported_languages"><code class="xref py py-func docutils literal notranslate"><span class="pre">supported_languages()</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.javaprocessor.JavaProcessor.threshold">
+<code class="descname">threshold</code><a class="headerlink" href="#mecoshark.processor.javaprocessor.JavaProcessor.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.threshold" title="mecoshark.processor.baseprocessor.BaseProcessor.threshold"><code class="xref py py-func docutils literal notranslate"><span class="pre">threshold()</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="python-processor">
+<h3>3.3.4. Python Processor<a class="headerlink" href="#python-processor" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="mecoshark.processor.pythonprocessor.PythonProcessor">
+<em class="property">class </em><code class="descclassname">mecoshark.processor.pythonprocessor.</code><code class="descname">PythonProcessor</code><span class="sig-paren">(</span><em>output_path</em>, <em>input_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/pythonprocessor.html#PythonProcessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.pythonprocessor.PythonProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor" title="mecoshark.processor.baseprocessor.BaseProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseProcessor</span></code></a> for Python</p>
+<dl class="method">
+<dt id="mecoshark.processor.pythonprocessor.PythonProcessor.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>output_path</em>, <em>input_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/pythonprocessor.html#PythonProcessor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.pythonprocessor.PythonProcessor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.pythonprocessor.PythonProcessor.enabled">
+<code class="descname">enabled</code><a class="headerlink" href="#mecoshark.processor.pythonprocessor.PythonProcessor.enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.enabled" title="mecoshark.processor.baseprocessor.BaseProcessor.enabled"><code class="xref py py-func docutils literal notranslate"><span class="pre">enabled()</span></code></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.processor.pythonprocessor.PythonProcessor.execute_sourcemeter">
+<code class="descname">execute_sourcemeter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/pythonprocessor.html#PythonProcessor.execute_sourcemeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.pythonprocessor.PythonProcessor.execute_sourcemeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes sourcemeter for a python project</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.processor.pythonprocessor.PythonProcessor.is_output_produced">
+<code class="descname">is_output_produced</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/pythonprocessor.html#PythonProcessor.is_output_produced"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.pythonprocessor.PythonProcessor.is_output_produced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if output was produced for the process</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.processor.pythonprocessor.PythonProcessor.process">
+<code class="descname">process</code><span class="sig-paren">(</span><em>project_name</em>, <em>revision</em>, <em>url</em>, <em>options</em>, <em>debug_level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/processor/pythonprocessor.html#PythonProcessor.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.processor.pythonprocessor.PythonProcessor.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.process" title="mecoshark.processor.baseprocessor.BaseProcessor.process"><code class="xref py py-func docutils literal notranslate"><span class="pre">process()</span></code></a></p>
+<p>Processes the given revision.
+1) executes sourcemeter
+2) creates <a class="reference internal" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser" title="mecoshark.resultparser.sourcemeterparser.SourcemeterParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">SourcemeterParser</span></code></a> instance
+3) calls <a class="reference internal" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_data" title="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">store_data()</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>revision</strong> – revision</li>
+<li><strong>url</strong> – url of the project that is analyzed</li>
+<li><strong>options</strong> – options for execution</li>
+<li><strong>debug_level</strong> – debugging_level</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.pythonprocessor.PythonProcessor.supported_languages">
+<code class="descname">supported_languages</code><a class="headerlink" href="#mecoshark.processor.pythonprocessor.PythonProcessor.supported_languages" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.supported_languages" title="mecoshark.processor.baseprocessor.BaseProcessor.supported_languages"><code class="xref py py-func docutils literal notranslate"><span class="pre">supported_languages()</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.processor.pythonprocessor.PythonProcessor.threshold">
+<code class="descname">threshold</code><a class="headerlink" href="#mecoshark.processor.pythonprocessor.PythonProcessor.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: <a class="reference internal" href="#mecoshark.processor.baseprocessor.BaseProcessor.threshold" title="mecoshark.processor.baseprocessor.BaseProcessor.threshold"><code class="xref py py-func docutils literal notranslate"><span class="pre">threshold()</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="resultparser">
+<h2>3.4. Resultparser<a class="headerlink" href="#resultparser" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="sourcemeterparser">
+<h3>3.4.1. SourceMeterParser<a class="headerlink" href="#sourcemeterparser" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser">
+<em class="property">class </em><code class="descclassname">mecoshark.resultparser.sourcemeterparser.</code><code class="descname">SourcemeterParser</code><span class="sig-paren">(</span><em>output_path</em>, <em>input_path</em>, <em>project_name</em>, <em>url</em>, <em>revision_hash</em>, <em>debug_level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parser that parses the results from sourcemeter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Property output_path:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">path to an output directory, where files can be stored</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Property input_path:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">path to the revisionn that is used as input</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Property url:</th><td class="field-body">url to the repository of the project that is analyzed</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Property vcs_system_id:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">id of the vcs_system with the given url</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Property stored_files:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">list of files that are stored at the input path</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Property ordered_file_states:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">dictionary that have all results in an ordered manner (a state that have another as parent must be after this parent state)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Property stored_file_states:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">states that were stored in the mongodb</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Property stored_meta_package_states:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">meta package states that were stored in the mongodb</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Property input_files:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">list of input files</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Property commit_id:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">id of the commit for which the data should be stored. <a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bson.objectid.ObjectId</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>output_path</em>, <em>input_path</em>, <em>project_name</em>, <em>url</em>, <em>revision_hash</em>, <em>debug_level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>output_path</strong> – path to an output directory, where files were stored</li>
+<li><strong>input_path</strong> – path to the revision that is used as input</li>
+<li><strong>url</strong> – url to the repository of the project that is analyzed</li>
+<li><strong>revision_hash</strong> – hash of the revision, which is analyzed</li>
+<li><strong>debug_level</strong> – debug level, like defined in <a class="reference external" href="https://docs.python.org/3.5/library/logging.html#module-logging" title="(in Python v3.5)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.find_stored_files">
+<code class="descname">find_stored_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.find_stored_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.find_stored_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>We need to find all files that are stored in the input path. This is needed to link the files that were parsed
+with the files that are already stored via vcsSHARK.
+:return: dictionary with file path as key and id as value (from vcsshark results)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_commit_id">
+<code class="descname">get_commit_id</code><span class="sig-paren">(</span><em>vcs_system_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.get_commit_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_commit_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the commit id for the corresponding projectid and revision
+:param vcs_system_id: id of the vcs system. <a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bson.objectid.ObjectId</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">commit_id (<a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bson.objectid.ObjectId</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_component_ids">
+<code class="descname">get_component_ids</code><span class="sig-paren">(</span><em>row_component_ids</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.get_component_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_component_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that gets the component ids from the component ids string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row_component_ids</strong> – component ids string</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">ObjectIds of all components as list (<a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bson.objectid.ObjectId</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_csv_file">
+<em class="property">static </em><code class="descname">get_csv_file</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.get_csv_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_csv_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a filepath or none if nothing is found.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path to file (regex)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">filepath or none</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_fullpath">
+<code class="descname">get_fullpath</code><span class="sig-paren">(</span><em>long_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.get_fullpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_fullpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the long_name is in the input files of the input path, it will return the corresponding file name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>long_name</strong> – long_name of the row</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">new long_name</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_vcs_system_id">
+<code class="descname">get_vcs_system_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.get_vcs_system_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_vcs_system_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the project id for the given url
+:param url: url of the vcs_system</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">vcs_system_id (<a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bson.objectid.ObjectId</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.prepare_csv_files">
+<code class="descname">prepare_csv_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.prepare_csv_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.prepare_csv_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the csv files generated by SourceMeter by creating a sort key and sort it after it</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.sanitize_long_name">
+<code class="descname">sanitize_long_name</code><span class="sig-paren">(</span><em>orig_long_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.sanitize_long_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.sanitize_long_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sanitizes the long_name of the row.
+1) If the long_name has the input path in it: just strip it
+2) If the long_name has the output path in it: just strip it
+3) Otherwise: The long_name will be separated by “/” and joined together after the first part was split.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>orig_long_name</strong> – long_name of the row</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">sanitized long_name</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is necessary, as the output of sourcemeter can be different based on which processor is used.</p>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.sanitize_metrics_dictionary">
+<em class="property">static </em><code class="descname">sanitize_metrics_dictionary</code><span class="sig-paren">(</span><em>metrics</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.sanitize_metrics_dictionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.sanitize_metrics_dictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function, which sanitizes the csv reader row so that it only contains the metrics of it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metrics</strong> – csv reader row</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dictionary of metrics</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.sort_for_parent">
+<em class="property">static </em><code class="descname">sort_for_parent</code><span class="sig-paren">(</span><em>state_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.sort_for_parent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.sort_for_parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sorts the given dictionary in a way, that the parent states of the states must be before it.
+Special rules apply for file states, as they do not have any parents.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state_dict</strong> – dictionary of states that should be ordered</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">ordered dictionary</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Example: X has parent Y, Y has parent Z. Therefore, it would be ordered:        Z -&gt; Y -&gt; X</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_clone_data">
+<code class="descname">store_clone_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.store_clone_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_clone_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses and stores the cloning data that was generated by sourcemeter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_data">
+<code class="descname">store_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.store_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call to store data: If they have ‘Path’ in the row, file states data is stored. Otherwise, meta package data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_extra_data">
+<code class="descname">store_extra_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.store_extra_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_extra_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call to store extra data. For java this would be the PMD file, for C/C++ the cppcheck file, and for
+python the pylint file.
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_file_states_data">
+<code class="descname">store_file_states_data</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.store_file_states_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_file_states_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the file states data.
+Fills the stored_file_states property for less database communication.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row</strong> – row that is processed:</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">File states have a direct connection to a file from a revision.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_meta_package_data">
+<code class="descname">store_meta_package_data</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mecoshark/resultparser/sourcemeterparser.html#SourcemeterParser.store_meta_package_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_meta_package_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the meta package data.
+Fills the stored_meta_package_states property for less database communication.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row</strong> – row that is processed</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Meta packages do not have a direct connection to files from a revision. It consists of a set of states.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="extension.html" class="btn btn-neutral float-left" title="2. How to Extend" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Fabian Trautsch
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

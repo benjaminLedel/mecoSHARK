@@ -1,0 +1,739 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>mecoshark.resultparser.sourcemeterparser &mdash; mecoSHARK 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> mecoSHARK
+          
+
+          
+            
+            <img src="../../../_static/SmartSHARK_read_the_docs_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../extension.html">2. How to Extend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">3. API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">mecoSHARK</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>mecoshark.resultparser.sourcemeterparser</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for mecoshark.resultparser.sourcemeterparser</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">mongoengine</span> <span class="k">import</span> <span class="n">DoesNotExist</span>
+
+<span class="kn">from</span> <span class="nn">pycoshark.mongomodels</span> <span class="k">import</span> <span class="n">Project</span><span class="p">,</span> <span class="n">VCSSystem</span><span class="p">,</span> <span class="n">Commit</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">CodeGroupState</span><span class="p">,</span> <span class="n">CodeEntityState</span><span class="p">,</span> <span class="n">CloneInstance</span>
+<span class="kn">from</span> <span class="nn">pycoshark.utils</span> <span class="k">import</span> <span class="n">get_code_entity_state_identifier</span><span class="p">,</span> <span class="n">get_code_group_state_identifier</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;sourcemeter_parser&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SourcemeterParser"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser">[docs]</a><span class="k">class</span> <span class="nc">SourcemeterParser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parser that parses the results from sourcemeter</span>
+
+<span class="sd">    :property output_path: path to an output directory, where files can be stored</span>
+<span class="sd">    :property input_path: path to the revisionn that is used as input</span>
+<span class="sd">    :property url: url to the repository of the project that is analyzed</span>
+<span class="sd">    :property vcs_system_id: id of the vcs_system with the given url</span>
+<span class="sd">    :property stored_files: list of files that are stored at the input path</span>
+<span class="sd">    :property ordered_file_states: dictionary that have all results in an ordered manner (a state that have another as parent must be after this parent state)</span>
+<span class="sd">    :property stored_file_states: states that were stored in the mongodb</span>
+<span class="sd">    :property stored_meta_package_states: meta package states that were stored in the mongodb</span>
+<span class="sd">    :property input_files: list of input files</span>
+<span class="sd">    :property commit_id: id of the commit for which the data should be stored. :class:`bson.objectid.ObjectId`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SourcemeterParser.__init__"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="n">project_name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">revision_hash</span><span class="p">,</span> <span class="n">debug_level</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization</span>
+
+<span class="sd">        :param output_path: path to an output directory, where files were stored</span>
+<span class="sd">        :param input_path: path to the revision that is used as input</span>
+<span class="sd">        :param url: url to the repository of the project that is analyzed</span>
+<span class="sd">        :param revision_hash: hash of the revision, which is analyzed</span>
+<span class="sd">        :param debug_level: debug level, like defined in :mod:`logging`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="o">=</span> <span class="n">output_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_path</span> <span class="o">=</span> <span class="n">input_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_name</span> <span class="o">=</span> <span class="n">project_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">revision_hash</span> <span class="o">=</span> <span class="n">revision_hash</span>
+
+        <span class="c1"># Default dictionaries and lists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ordered_file_states</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_file_states</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_meta_package_states</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Get logger</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">debug_level</span><span class="p">)</span>
+
+        <span class="c1"># Get project id and find all stored files in the current input path (needed for java projects)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_vcs_system_id</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commit_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_commit_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_stored_files</span><span class="p">()</span>
+
+        <span class="c1"># Prepare csv files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prepare_csv_files</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.get_commit_id"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_commit_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_commit_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vcs_system_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the commit id for the corresponding projectid and revision</span>
+<span class="sd">        :param vcs_system_id: id of the vcs system. :class:`bson.objectid.ObjectId`</span>
+
+<span class="sd">        :return: commit_id (:class:`bson.objectid.ObjectId`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">revision_hash</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">revision_hash</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">except</span> <span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Commit with vcs_system_id </span><span class="si">%s</span><span class="s2"> and revision </span><span class="si">%s</span><span class="s2"> does not exist&quot;</span> <span class="o">%</span>
+                              <span class="p">(</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">revision_hash</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.get_vcs_system_id"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_vcs_system_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_vcs_system_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the project id for the given url</span>
+<span class="sd">        :param url: url of the vcs_system</span>
+
+<span class="sd">        :return: vcs_system_id (:class:`bson.objectid.ObjectId`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">VCSSystem</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">except</span> <span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;VCSSystem with the url </span><span class="si">%s</span><span class="s2"> does not exist in the database! Execute vcsSHARK first!&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.find_stored_files"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.find_stored_files">[docs]</a>    <span class="k">def</span> <span class="nf">find_stored_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        We need to find all files that are stored in the input path. This is needed to link the files that were parsed</span>
+<span class="sd">        with the files that are already stored via vcsSHARK.</span>
+<span class="sd">        :return: dictionary with file path as key and id as value (from vcsshark results)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get list of files in input_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_path</span><span class="p">,</span> <span class="n">topdown</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">full_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_path</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Filter out git directory</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">full_file_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/.git/&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">full_file_path</span><span class="p">)</span>
+
+        <span class="c1"># get all stored files of the project</span>
+        <span class="n">stored_files</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">File</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">):</span>
+            <span class="n">stored_files</span><span class="p">[</span><span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="k">return</span> <span class="n">stored_files</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.get_csv_file"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_csv_file">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_csv_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a filepath or none if nothing is found.</span>
+
+<span class="sd">        :param path: path to file (regex)</span>
+
+<span class="sd">        :return: filepath or none</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.prepare_csv_files"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.prepare_csv_files">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_csv_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepares the csv files generated by SourceMeter by creating a sort key and sort it after it</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_csv_paths</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Class.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;enum&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Enum.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;interface&#39;</span><span class="p">:</span>  <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Interface.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Method.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;annotation&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Annotation.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;attribute&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Attribute.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;component&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Component.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-File.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Function.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Module.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Package.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;namespace&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Namespace.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;structure&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Structure.csv&quot;</span><span class="p">)),</span>
+            <span class="s1">&#39;union&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_csv_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-Union.csv&quot;</span><span class="p">)),</span>
+        <span class="p">}</span>
+
+        <span class="n">file_states</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">all_csv_paths</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Open path: &quot;</span><span class="o">+</span><span class="n">path</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+                    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+
+                        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span>
+                            <span class="n">row</span><span class="p">[</span><span class="s1">&#39;sortKey&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;2&#39;</span>
+                            <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;LongName&#39;</span><span class="p">]</span>
+                            <span class="n">file_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                            <span class="k">continue</span>
+
+                        <span class="k">if</span> <span class="s1">&#39;Parent&#39;</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;__LogicalRoot__&#39;</span><span class="p">:</span>
+                                <span class="n">row</span><span class="p">[</span><span class="s1">&#39;sortKey&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+                                <span class="n">file_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">row</span><span class="p">[</span><span class="s1">&#39;sortKey&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">)</span>
+                                <span class="n">file_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">row</span><span class="p">[</span><span class="s1">&#39;sortKey&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+                            <span class="n">file_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="n">file_states</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">file_states</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="s1">&#39;sortKey&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ordered_file_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_for_parent</span><span class="p">(</span><span class="n">file_states</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.sort_for_parent"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.sort_for_parent">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">sort_for_parent</span><span class="p">(</span><span class="n">state_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sorts the given dictionary in a way, that the parent states of the states must be before it.</span>
+<span class="sd">        Special rules apply for file states, as they do not have any parents.</span>
+
+
+<span class="sd">        :param state_dict: dictionary of states that should be ordered</span>
+<span class="sd">        :return: ordered dictionary</span>
+
+<span class="sd">        .. NOTE:: Example: X has parent Y, Y has parent Z. Therefore, it would be ordered:\</span>
+<span class="sd">        Z -&gt; Y -&gt; X</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">not_finished</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">new_dict</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">written_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">while</span> <span class="n">not_finished</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">state_dict</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;Parent&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">written_ids</span><span class="p">:</span>
+                    <span class="n">written_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">])</span>
+                    <span class="n">new_dict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="s1">&#39;Parent&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">written_ids</span> <span class="ow">and</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">written_ids</span>
+                                                                         <span class="ow">or</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;__LogicalRoot__&#39;</span>
+                                                                         <span class="ow">or</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;file&#39;</span><span class="p">):</span>
+                    <span class="n">written_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">])</span>
+                    <span class="n">new_dict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">written_ids</span><span class="p">):</span>
+                    <span class="n">not_finished</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">new_dict</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.store_data"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_data">[docs]</a>    <span class="k">def</span> <span class="nf">store_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call to store data: If they have &#39;Path&#39; in the row, file states data is stored. Otherwise, meta package data</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordered_file_states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;Path&#39;</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">store_file_states_data</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">store_meta_package_data</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_clone_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_extra_data</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.store_extra_data"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_extra_data">[docs]</a>    <span class="k">def</span> <span class="nf">store_extra_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call to store extra data. For java this would be the PMD file, for C/C++ the cppcheck file, and for</span>
+<span class="sd">        python the pylint file.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Check which file is found</span>
+        <span class="n">pmd_file_path</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-PMD.txt&quot;</span><span class="p">))</span>
+        <span class="c1">#pylint_file_path = glob.glob(os.path.join(self.output_path, &quot;*-Pylint.txt&quot;))</span>
+
+        <span class="k">if</span> <span class="n">pmd_file_path</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_pmd_file</span><span class="p">(</span><span class="n">pmd_file_path</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+        <span class="c1">#elif pylint_file_path:</span>
+        <span class="c1">#    self.parse_pylint_file(pylint_file_path[0])</span>
+
+    <span class="k">def</span> <span class="nf">parse_pmd_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsing &amp; storing pmd warnings...&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">pmd_file</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pmd_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+        <span class="c1"># Go through all warnings that pmd reported</span>
+        <span class="n">file_warnings</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+            <span class="n">file_parts</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">pmd_type</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">file_parts</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">file_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_path</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">line_number</span> <span class="o">=</span> <span class="n">file_parts</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">)</span>
+
+            <span class="n">warnings</span> <span class="o">=</span> <span class="n">file_warnings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;ln&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">line_number</span><span class="p">),</span> <span class="s2">&quot;l_ty&quot;</span><span class="p">:</span> <span class="n">pmd_type</span><span class="p">,</span> <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">})</span>
+            <span class="n">file_warnings</span><span class="p">[</span><span class="n">file_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">warnings</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found the following pmd warnings: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">file_warnings</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">file_warnings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Get file id</span>
+                <span class="n">m_file</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">file_path</span><span class="p">,</span> <span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+                <span class="c1"># Get code entity state</span>
+                <span class="n">identifier</span> <span class="o">=</span> <span class="n">get_code_entity_state_identifier</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_id</span><span class="p">,</span> <span class="n">m_file</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="n">m_ces</span> <span class="o">=</span> <span class="n">CodeEntityState</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">s_key</span><span class="o">=</span><span class="n">identifier</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+                <span class="n">m_ces</span><span class="o">.</span><span class="n">linter</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+                <span class="k">for</span> <span class="n">warnings</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">m_ces</span><span class="o">.</span><span class="n">linter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">warnings</span><span class="p">)</span>
+
+                <span class="c1"># Save code entity state</span>
+                <span class="n">m_ces</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">DoesNotExist</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Code Entity State for file </span><span class="si">%s</span><span class="s2"> does not exist!&quot;</span> <span class="o">%</span> <span class="n">file_path</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SourcemeterParser.get_component_ids"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_component_ids">[docs]</a>    <span class="k">def</span> <span class="nf">get_component_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_component_ids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function that gets the component ids from the component ids string.</span>
+
+<span class="sd">        :param row_component_ids: component ids string</span>
+<span class="sd">        :return: ObjectIds of all components as list (:class:`bson.objectid.ObjectId`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get list of objectids for all components in the csv file</span>
+        <span class="n">row_component_ids</span> <span class="o">=</span> <span class="n">row_component_ids</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="n">component_object_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row_component_id</span> <span class="ow">in</span> <span class="n">row_component_ids</span><span class="p">:</span>
+            <span class="n">component_object_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stored_meta_package_states</span><span class="p">[</span><span class="n">row_component_id</span><span class="o">.</span><span class="n">strip</span><span class="p">()])</span>
+        <span class="k">return</span> <span class="n">component_object_ids</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.store_meta_package_data"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_meta_package_data">[docs]</a>    <span class="k">def</span> <span class="nf">store_meta_package_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores the meta package data.</span>
+<span class="sd">        Fills the stored_meta_package_states property for less database communication.</span>
+
+<span class="sd">        :param row: row that is processed</span>
+
+<span class="sd">        .. NOTE:: Meta packages do not have a direct connection to files from a revision. It consists of a set of states.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">long_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sanitize_long_name</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;LongName&#39;</span><span class="p">])</span>
+        <span class="n">metrics_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sanitize_metrics_dictionary</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+
+        <span class="n">cg_parent_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="s1">&#39;Parent&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_meta_package_states</span><span class="p">:</span>
+            <span class="n">cg_parent_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stored_meta_package_states</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]])</span>
+
+        <span class="k">if</span> <span class="s1">&#39;Component&#39;</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+            <span class="n">cg_parent_ids</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_component_ids</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Component&#39;</span><span class="p">]))</span>
+
+        <span class="n">s_key</span> <span class="o">=</span> <span class="n">get_code_group_state_identifier</span><span class="p">(</span><span class="n">long_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_id</span><span class="p">)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;set__metrics__</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metrics_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;s_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s_key</span>
+        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">long_name</span>
+        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;commit_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_id</span>
+        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;cg_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+        <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;cg_parent_ids&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cg_parent_ids</span>
+
+        <span class="n">state_id</span> <span class="o">=</span> <span class="n">CodeGroupState</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">s_key</span><span class="o">=</span><span class="n">s_key</span><span class="p">)</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="o">**</span><span class="n">tmp</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_meta_package_states</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">state_id</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.store_file_states_data"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_file_states_data">[docs]</a>    <span class="k">def</span> <span class="nf">store_file_states_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores the file states data.</span>
+<span class="sd">        Fills the stored_file_states property for less database communication.</span>
+
+<span class="sd">        :param row: row that is processed:</span>
+
+<span class="sd">        .. NOTE:: File states have a direct connection to a file from a revision.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sanitize_long_name</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Path&#39;</span><span class="p">])</span>
+
+        <span class="c1"># We only need to sanitize the long name for files, Otherwise we store it like it comes out of sourcemeter</span>
+        <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span>
+            <span class="n">long_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sanitize_long_name</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;LongName&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">long_name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;LongName&#39;</span><span class="p">]</span>
+
+        <span class="n">cg_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ce_parent_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s1">&#39;Parent&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_meta_package_states</span><span class="p">:</span>
+            <span class="n">cg_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stored_meta_package_states</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]])</span>
+        <span class="k">elif</span> <span class="s1">&#39;Parent&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_file_states</span><span class="p">:</span>
+            <span class="n">ce_parent_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_file_states</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]]</span>
+        <span class="k">elif</span> <span class="s1">&#39;Parent&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;ERROR! Parent not found for </span><span class="si">%s</span><span class="s2">!&quot;</span> <span class="o">%</span> <span class="n">row</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;Component&#39;</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+            <span class="n">cg_ids</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_component_ids</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Component&#39;</span><span class="p">]))</span>
+
+        <span class="n">start_line</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">end_line</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">start_column</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">end_column</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s1">&#39;Line&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="s1">&#39;EndLine&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="s1">&#39;Column&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="s1">&#39;EndColumn&#39;</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+            <span class="n">start_line</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Line&#39;</span><span class="p">]</span>
+            <span class="n">end_line</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;EndLine&#39;</span><span class="p">]</span>
+            <span class="n">start_column</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Column&#39;</span><span class="p">]</span>
+            <span class="n">end_column</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;EndColumn&#39;</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">s_key</span> <span class="o">=</span> <span class="n">get_code_entity_state_identifier</span><span class="p">(</span><span class="n">long_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_files</span><span class="p">[</span><span class="n">path_name</span><span class="p">])</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;set__metrics__</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sanitize_metrics_dictionary</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">row</span><span class="p">))</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;s_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s_key</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">long_name</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;commit_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_id</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;file_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_files</span><span class="p">[</span><span class="n">path_name</span><span class="p">]</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;ce_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;cg_ids&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cg_ids</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;ce_parent_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ce_parent_id</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;start_line&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_line</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;end_line&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_line</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;start_column&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_column</span>
+            <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;end_column&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_column</span>
+
+            <span class="n">state_id</span> <span class="o">=</span> <span class="n">CodeEntityState</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">s_key</span><span class="o">=</span><span class="n">s_key</span><span class="p">)</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="o">**</span><span class="n">tmp</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stored_file_states</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">state_id</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># This should not happen, but it can happen, e.g., for the conftest.cpp file for C/c++ projects, which</span>
+            <span class="c1"># is just temporally created</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not store results for file </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">path_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.store_clone_data"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.store_clone_data">[docs]</a>    <span class="k">def</span> <span class="nf">store_clone_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses and stores the cloning data that was generated by sourcemeter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsing &amp; storing clone data...&quot;</span><span class="p">)</span>
+        <span class="n">clone_class_csv_path</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-CloneClass.csv&quot;</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">clone_instance_csv_path</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;*-CloneInstance.csv&quot;</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">clone_classes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">clone_class_csv_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="n">clone_classes</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sanitize_metrics_dictionary</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">clone_instance_csv_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="n">metrics_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sanitize_metrics_dictionary</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+                <span class="n">long_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sanitize_long_name</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Path&#39;</span><span class="p">])</span>
+
+                <span class="n">tmp</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;commit_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_id</span><span class="p">,</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;file_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_files</span><span class="p">[</span><span class="n">long_name</span><span class="p">],</span>
+                    <span class="s1">&#39;clone_class&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;clone_class_metrics&#39;</span><span class="p">:</span> <span class="n">clone_classes</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]],</span>
+                    <span class="s1">&#39;clone_instance_metrics&#39;</span><span class="p">:</span> <span class="n">metrics_dict</span><span class="p">,</span>
+                    <span class="s1">&#39;start_line&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Line&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;end_line&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;EndLine&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;start_column&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Column&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;end_column&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;EndColumn&#39;</span><span class="p">]</span>
+                <span class="p">}</span>
+
+                <span class="n">CloneInstance</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">],</span> <span class="n">commit_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">commit_id</span><span class="p">,</span>
+                                      <span class="n">file_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stored_files</span><span class="p">[</span><span class="n">long_name</span><span class="p">])</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="o">**</span><span class="n">tmp</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finished parsing &amp; storing clone data!&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.sanitize_metrics_dictionary"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.sanitize_metrics_dictionary">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">sanitize_metrics_dictionary</span><span class="p">(</span><span class="n">metrics</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Helper function, which sanitizes the csv reader row so that it only contains the metrics of it.</span>
+
+<span class="sd">        :param metrics: csv reader row</span>
+<span class="sd">        :return: dictionary of metrics</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;LongName&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;LongName&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;sortKey&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;sortKey&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;Component&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;Component&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;Path&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;Path&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;Parent&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;Parent&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;WarningBlocker&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;WarningBlocker&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;WarningCritical&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;WarningCritical&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;WarningInfo&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;WarningInfo&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;WarningMajor&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;WarningMajor&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;WarningMinor&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;WarningMinor&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;Line&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;Line&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;EndLine&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;EndLine&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;Column&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;Column&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;EndColumn&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;EndColumn&#39;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">metrics</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">metrics</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">metrics</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="n">metrics</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.sanitize_long_name"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.sanitize_long_name">[docs]</a>    <span class="k">def</span> <span class="nf">sanitize_long_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orig_long_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sanitizes the long_name of the row.</span>
+<span class="sd">        1) If the long_name has the input path in it: just strip it</span>
+<span class="sd">        2) If the long_name has the output path in it: just strip it</span>
+<span class="sd">        3) Otherwise: The long_name will be separated by &quot;/&quot; and joined together after the first part was split.</span>
+
+<span class="sd">        :param orig_long_name: long_name of the row</span>
+<span class="sd">        :return: sanitized long_name</span>
+
+
+<span class="sd">        .. NOTE:: This is necessary, as the output of sourcemeter can be different based on which processor is used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_path</span> <span class="ow">in</span> <span class="n">orig_long_name</span><span class="p">:</span>
+            <span class="n">long_name</span> <span class="o">=</span> <span class="n">orig_long_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="ow">in</span> <span class="n">orig_long_name</span><span class="p">:</span>
+            <span class="n">long_name</span> <span class="o">=</span> <span class="n">orig_long_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">orig_long_name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span>
+
+            <span class="c1"># if long_name is not an empty string</span>
+            <span class="k">if</span> <span class="n">long_name</span><span class="p">:</span>
+                <span class="n">long_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fullpath</span><span class="p">(</span><span class="n">long_name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">long_name</span> <span class="o">=</span> <span class="n">orig_long_name</span>
+
+        <span class="k">if</span> <span class="n">long_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">long_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+            <span class="n">long_name</span> <span class="o">=</span> <span class="n">long_name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">long_name</span></div>
+
+<div class="viewcode-block" id="SourcemeterParser.get_fullpath"><a class="viewcode-back" href="../../../api.html#mecoshark.resultparser.sourcemeterparser.SourcemeterParser.get_fullpath">[docs]</a>    <span class="k">def</span> <span class="nf">get_fullpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">long_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If the long_name is in the input files of the input path, it will return the corresponding file name</span>
+
+<span class="sd">        :param long_name: long_name of the row</span>
+<span class="sd">        :return: new long_name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">long_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">file_name</span>
+        <span class="k">return</span> <span class="n">long_name</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Fabian Trautsch
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

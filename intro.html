@@ -1,0 +1,535 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>1. Introduction &mdash; mecoSHARK 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. How to Extend" href="extension.html" />
+    <link rel="prev" title="Welcome to mecoSHARK’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> mecoSHARK
+          
+
+          
+            
+            <img src="_static/SmartSHARK_read_the_docs_logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#model-documentation">1.1. Model Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">1.2. Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#via-pip">1.2.1. via Pip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#via-setup-py">1.2.2. via setup.py</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tests">1.3. Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#execution">1.4. Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial">1.5. Tutorial</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extension.html">2. How to Extend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">3. API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mecoSHARK</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>1. Introduction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/intro.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction">
+<h1>1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>This introduction will show how to use <strong>mecoSHARK</strong>. Furthermore, we list all requirements for this tool here, so that an
+easy installation is possible.</p>
+<p><strong>mecoSHARK</strong> collects over 70 different static product metrics and over 15 different code clone metrics.
+A full list of the calculated metrics can be found in our database documentation.
+Furthermore, mecoFoo detects type-2 clones in the code.</p>
+<p>The tool works on a revision of a repository, where <a class="reference external" href="https://github.com/smartshark/vcsSHARK">vcsSHARK</a> was executed
+beforehand. Generally, mecoSHARK works in two phases: first, the programming language of the project is automatically
+detected by using sloccount. If a given threshold is reached (% of files that are written in a
+certain programming language), we execute the metrics calculator and clone parser for this kind of programming language.
+Currently, we support Java and Python.
+Second, the results are parsed and stored in the MongoDB using the mongoengine ORM library.</p>
+<p>For the metrics calculation and clone detection we use <a class="reference external" href="https://www.sourcemeter.com/download/">sourcemeter</a>.
+Additionally, SourceMeter provides the option to build the project via Ant or Maven and calculate the metrics afterwards.
+We have implemented, but currently disabled, this feature in <strong>mecoSHARK</strong>, as it is not tested in-depth.</p>
+<p>We use a vanilla Ubuntu 16.04 operating system as basis for the steps that we describe. If necessary, we give hints
+on how to perform this step with a different operating system.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This software is still in development.</p>
+</div>
+<div class="section" id="model-documentation">
+<h2>1.1. Model Documentation<a class="headerlink" href="#model-documentation" title="Permalink to this headline">¶</a></h2>
+<p>The documentation for the used database models can be found here: <a class="reference external" href="https://smartshark.github.io/pycoSHARK/api.html">https://smartshark.github.io/pycoSHARK/api.html</a></p>
+</div>
+<div class="section" id="installation">
+<span id="id1"></span><h2>1.2. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>The installation process needs a little bit more effort, as <a class="reference external" href="https://www.sourcemeter.com/download/">sourcemeter</a> can not be publicly distributed. For a vanilla
+Ubuntu 16.04, we need to install the following packages:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo apt-get install git python3-pip python3-cffi
+</pre></div>
+</div>
+<p>You also need to install JAVA. For more information follow this link: <a class="reference external" href="https://wiki.ubuntuusers.de/Java/Installation">https://wiki.ubuntuusers.de/Java/Installation</a></p>
+<p>After these requirements are met, first clone the
+<strong>mecoSHARK</strong> <a class="reference external" href="https://github.com/smartshark/mecoSHARK/">repository</a> repository to a folder you want. In the
+following, we assume that you have cloned the repository to <strong>~/mecoSHARK</strong>. Afterwards,
+the installation of <strong>mecoSHARK</strong> can be done in two different ways:</p>
+<div class="section" id="via-pip">
+<h3>1.2.1. via Pip<a class="headerlink" href="#via-pip" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo pip3 install https://github.com/smartshark/mecoSHARK/zipball/master --process-dependency-links
+</pre></div>
+</div>
+</div>
+<div class="section" id="via-setup-py">
+<h3>1.2.2. via setup.py<a class="headerlink" href="#via-setup-py" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo python3.5 ~/mecoSHARK/setup.py install
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is advisable to change the location, where the logs are written to.
+They can be changed in the <strong>~/mecoSHARK/mecoshark/loggerConfiguration.json</strong>. There are different file handlers defined.
+Just change the “filename”-attribute to a location of your wish.</p>
+</div>
+<p>Afterwards, you need to download <a class="reference external" href="https://www.sourcemeter.com/download/">sourcemeter</a> and create the following structure:</p>
+<p>Overall structure:</p>
+<img alt="_images/folder_structure.png" src="_images/folder_structure.png" />
+<p>Sloccount structure:</p>
+<img alt="_images/sloccount.png" src="_images/sloccount.png" />
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Make sure, that your $JAVA_HOME is set correctly!</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Make sure, that /external/sloccount2.26 is in your $PATH.</p>
+</div>
+<p>Furthermore, you need a running MongoDB. The process of setting up a MongoDB is explained here:
+<a class="reference external" href="https://docs.mongodb.com/manual/installation/">https://docs.mongodb.com/manual/installation/</a></p>
+</div>
+</div>
+<div class="section" id="tests">
+<h2>1.3. Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
+<p>The tests of <strong>mecoSHARK</strong> can be executed by calling</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3.5 ~/mecoSHARK/setup.py <span class="nb">test</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The tests can be found in the folder “tests”.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The generated tests are not fully complete. They just test the basic functionality.</p>
+</div>
+</div>
+<div class="section" id="execution">
+<h2>1.4. Execution<a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h2>
+<p>In this chapter, we explain how you can execute <strong>mecoSHARK</strong>. Furthermore, the different execution parameters are
+explained in detail.</p>
+<ol class="arabic">
+<li><p class="first">Choose a project from which you want to collect metrics</p>
+</li>
+<li><p class="first">Clone this project</p>
+</li>
+<li><p class="first">Make sure that your MongoDB is running!</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo systemctl status mongodb
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Execute <a class="reference external" href="https://github.com/smartshark/vcsSHARK">vcsSHARK</a> on this project</p>
+</li>
+<li><p class="first">Set the project you want to analyze to a specific revision</p>
+</li>
+<li><p class="first">Execute <strong>mecoSHARK</strong> by calling</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3.5 ~/mecoSHARK/main.py
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<p><strong>mecoSHARK</strong> supports different commandline arguments:</p>
+<dl class="option">
+<dt id="cmdoption-help">
+<code class="descname">--help</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-h</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-help" title="Permalink to this definition">¶</a></dt>
+<dd><p>shows the help page for this command</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-version">
+<code class="descname">--version</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-v</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-version" title="Permalink to this definition">¶</a></dt>
+<dd><p>shows the version</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-db-user">
+<code class="descname">--db-user</code><code class="descclassname"> &lt;USER&gt;</code><code class="descclassname">, </code><code class="descname">-U</code><code class="descclassname"> &lt;USER&gt;</code><a class="headerlink" href="#cmdoption-db-user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: None</p>
+<p>mongodb user name</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-db-password">
+<code class="descname">--db-password</code><code class="descclassname"> &lt;PASSWORD&gt;</code><code class="descclassname">, </code><code class="descname">-P</code><code class="descclassname"> &lt;PASSWORD&gt;</code><a class="headerlink" href="#cmdoption-db-password" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: None</p>
+<p>mongodb password</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-db-database">
+<code class="descname">--db-database</code><code class="descclassname"> &lt;DATABASENAME&gt;</code><code class="descclassname">, </code><code class="descname">-DB</code><code class="descclassname"> &lt;DATABASENAME&gt;</code><a class="headerlink" href="#cmdoption-db-database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: smartshark</p>
+<p>database name</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-db-hostname">
+<code class="descname">--db-hostname</code><code class="descclassname"> &lt;HOSTNAME&gt;</code><code class="descclassname">, </code><code class="descname">-H</code><code class="descclassname"> &lt;HOSTNAME&gt;</code><a class="headerlink" href="#cmdoption-db-hostname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: localhost</p>
+<p>hostname, where the mongodb runs on</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-db-port">
+<code class="descname">--db-port</code><code class="descclassname"> &lt;PORT&gt;</code><code class="descclassname">, </code><code class="descname">-p</code><code class="descclassname"> &lt;PORT&gt;</code><a class="headerlink" href="#cmdoption-db-port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: 27017</p>
+<p>port, where the mongodb runs on</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-db-authentication">
+<code class="descname">--db-authentication</code><code class="descclassname"> &lt;DB_AUTHENTICATION&gt; -a &lt;DB_AUTHENTICATION&gt;</code><a class="headerlink" href="#cmdoption-db-authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: None</p>
+<p>name of the authentication database</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-ssl">
+<code class="descname">--ssl</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-ssl" title="Permalink to this definition">¶</a></dt>
+<dd><p>enables ssl for the connection to the mongodb</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-debug">
+<code class="descname">--debug</code><code class="descclassname"> &lt;DEBUG_LEVEL&gt;</code><code class="descclassname">, </code><code class="descname">-d</code><code class="descclassname"> &lt;DEBUG_LEVEL&gt;</code><a class="headerlink" href="#cmdoption-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: DEBUG</p>
+<p>Debug level (INFO, DEBUG, WARNING, ERROR)</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-repository-url">
+<code class="descname">--repository_url</code><code class="descclassname"> &lt;URL&gt;</code><code class="descclassname">, </code><code class="descname">-u</code><code class="descclassname"> &lt;URL&gt;</code><a class="headerlink" href="#cmdoption-repository-url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required</p>
+<p>URL of the project (e.g., <a class="reference external" href="https://github.com/smartshark/mecoSHARK">https://github.com/smartshark/mecoSHARK</a>)</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-revision">
+<code class="descname">--revision</code><code class="descclassname"> &lt;REVISION_HASH&gt;</code><code class="descclassname">, </code><code class="descname">-r</code><code class="descclassname"> &lt;REVISION_HASH&gt;</code><a class="headerlink" href="#cmdoption-revision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required</p>
+<p>Hash of the revision that is analyzed</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-input">
+<code class="descname">--input</code><code class="descclassname"> &lt;PATH&gt;</code><code class="descclassname">, </code><code class="descname">-i</code><code class="descclassname"> &lt;PATH&gt;</code><a class="headerlink" href="#cmdoption-input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required</p>
+<p>Path to the repository that should be analyzed</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-output">
+<code class="descname">--output</code><code class="descclassname"> &lt;PATH&gt;</code><code class="descclassname">, </code><code class="descname">-o</code><code class="descclassname"> &lt;PATH&gt;</code><a class="headerlink" href="#cmdoption-output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required</p>
+<p>Path to a folder that can  be used as output</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-makefile-contents">
+<code class="descname">--makefile-contents</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-makefile-contents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default: None</p>
+<p>Contents of the makefile (only for c/c++/c#), e.g., “./configurenmake”.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="tutorial">
+<h2>1.5. Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<p>In this section we show step-by-step how you can store metrics of the
+<a class="reference external" href="https://github.com/apache/zookeeper">Zookeeper</a> project in the MongoDB</p>
+<p>1.      First, you need to have a mongodb running (version 3.2+).
+How this can be achieved is explained here: <a class="reference external" href="https://docs.mongodb.org/manual/">https://docs.mongodb.org/manual/</a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Make sure, that you activated the authentication of mongodb
+(<strong>mecoSHARK</strong> also works without authentication, but with authentication it is much safer!).
+Hints how this can be achieved are given <a class="reference external" href="https://docs.mongodb.org/manual/core/authentication/">here</a>.</p>
+</div>
+<ol class="arabic" start="2">
+<li><p class="first">Add zookeeper to the projects table in MongoDB.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ mongo
+$ use smartshark
+$ db.project.insert<span class="o">({</span><span class="s2">&quot;name&quot;</span>: <span class="s2">&quot;Zookeeper&quot;</span><span class="o">})</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Install <a class="reference external" href="https://github.com/smartshark/vcsSHARK">vcsSHARK</a></p>
+</li>
+<li><p class="first">Enter the <strong>vcsSHARK</strong> directory via</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> vcsSHARK
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Clone the Zookeeper repository to your home directory (or another place)</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/apache/zookeeper ~/Zookeeper
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Execute <strong>vcsSHARK</strong>:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/vcsSHARK
+$ python3.5 ~/vcsSHARK/vcsshark.py -D mongo -DB smartshark -H localhost -p <span class="m">27017</span> -n Zookeeper --path ~/Zookeeper
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Set Zookeeper to the revision: edf75b5e31f0d9e2fbfadbd95bae9d1d6c4737f6</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/Zookeeper
+$ git reset --hard edf75b5e31f0d9e2fbfadbd95bae9d1d6c4737f6
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<ol class="arabic" start="7">
+<li><p class="first">Install <strong>mecoSHARK</strong>. An explanation is given above.</p>
+</li>
+<li><p class="first">Enter the <strong>mecoSHARK</strong> directory via</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/mecoSHARK
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Test if everything works as expected</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3.5 main.py --help
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you receive an error here, it is most likely, that the installation process failed.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Create an empty directory</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ mkdir ~/temp
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<ol class="arabic" start="5">
+<li><p class="first">Execute <strong>mecoSHARK</strong>:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/mecoSHARK
+$ python3.5 main.py -i ~/Zookeeper -o ~/temp -r edf75b5e31f0d9e2fbfadbd95bae9d1d6c4737f6 -u https://github.com/apache/zookeeper
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<p>Thats it. The results are explained in the database documentation
+of <a class="reference external" href="http://smartshark2.informatik.uni-goettingen.de/documentation/">SmartSHARK</a>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="extension.html" class="btn btn-neutral float-right" title="2. How to Extend" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to mecoSHARK’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Fabian Trautsch
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
